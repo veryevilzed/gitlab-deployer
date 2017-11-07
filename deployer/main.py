@@ -23,7 +23,7 @@ log = logging.getLogger("DEPLOYER")
 @click.option('--interval', default=5, help='Pull interval')
 @click.option('--error_sleep', default=25, help='Sleep on error')
 @click.option('--verbosity', default=False, help='Verbosity (log.level=DEBUG)')
-def upload(url, private_token, project_id, slack_web_hook, slack_channel, slack_username, deploy_script, last_job_file,
+def deploy(url, private_token, project_id, slack_web_hook, slack_channel, slack_username, deploy_script, last_job_file,
            interval, error_sleep, verbosity):
     if private_token == "" and os.environ.get('GITLAB_PRIVATE_TOKEN'):
         private_token = os.environ.get('GITLAB_PRIVATE_TOKEN')
@@ -45,4 +45,4 @@ def upload(url, private_token, project_id, slack_web_hook, slack_channel, slack_
 
 
 if __name__ == '__main__':
-    upload()
+    deploy()
