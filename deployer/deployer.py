@@ -124,9 +124,3 @@ class Downloader(object):
     def __call__(self, chunk):
         self._fd.write(chunk)
 
-# target = Foo()
-# build_or_job.artifacts(streamed=True, action=target)
-# del(target)  # flushes data on disk
-
-
-Deployer()

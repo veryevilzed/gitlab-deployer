@@ -4,16 +4,11 @@ import os, logging, click, sys
 
 from deployer import Deployer
 
+import click as cli
+
 FORMAT = '%(asctime)-7s [%(name)-6s] [%(levelname)-5s] %(message)s'
 logging.basicConfig(format=FORMAT, level=logging.INFO, datefmt="%H:%M:%S")
 log = logging.getLogger("DEPLOYER")
-
-@click.group()
-def cli():
-    pass
-
-if __name__ == '__main__':
-    cli()
 
 
 @cli.command()
@@ -28,7 +23,7 @@ if __name__ == '__main__':
 @click.option('--interval', default=5, help='Pull interval')
 @click.option('--error_sleep', default=25, help='Sleep on error')
 @click.option('--verbosity', default=False, help='Verbosity (log.level=DEBUG)')
-def upload(private_token, project_id, slack_web_hook, slack_channel, slack_username, deploy_script, last_job_file,
+def upload(url, private_token, project_id, slack_web_hook, slack_channel, slack_username, deploy_script, last_job_file,
            interval, error_sleep, verbosity):
     if private_token == "" and os.environ.get('GITLAB_PRIVATE_TOKEN'):
         private_token = os.environ.get('GITLAB_PRIVATE_TOKEN')
@@ -49,4 +44,5 @@ def upload(private_token, project_id, slack_web_hook, slack_channel, slack_usern
     
 
 
-        
+if __name__ == '__main__':
+    upload()
