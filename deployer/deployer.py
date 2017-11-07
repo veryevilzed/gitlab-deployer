@@ -56,6 +56,8 @@ class Deployer:
 
 
     def send(self, text):
+        if not self.slack_web_hook:
+            return
         self.slack['text'] = text
         raw_data = "payload={" \
                    "\"channel\": \"%(channel)s\"," \
