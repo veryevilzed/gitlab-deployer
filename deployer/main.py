@@ -3,13 +3,16 @@
 import os, logging, click, sys
 
 from deployer import Deployer
-
-import click as cli
+from download import Download
 
 FORMAT = '%(asctime)-7s [%(name)-6s] [%(levelname)-5s] %(message)s'
 #logging.basicConfig(format=FORMAT, level=logging.INFO, datefmt="%H:%M:%S")
 log = logging.getLogger("DEPLOYER")
 
+
+@click.group()
+def cli():
+    pass
 
 @cli.command()
 @click.option('--url', default="http://gitlab.com/", help='GitLab url')
@@ -24,9 +27,8 @@ log = logging.getLogger("DEPLOYER")
 @click.option('--error_sleep', default=25, help='Sleep on error (25)')
 @click.option('--verbosity', default=False, help='Verbosity (log.level=DEBUG)')
 @click.option('--ref', default="master", help='Git Branch')
-@click.option('--cfg', default="", help='Config file')
 def deploy(url, private_token, project_id, slack_web_hook, slack_channel, slack_username, deploy_script, last_job_file,
-           interval, error_sleep, verbosity, ref, cfg):
+           interval, error_sleep, verbosity, ref):
     if private_token == "" and os.environ.get('GITLAB_PRIVATE_TOKEN'):
         private_token = os.environ.get('GITLAB_PRIVATE_TOKEN')
 
@@ -45,8 +47,22 @@ def deploy(url, private_token, project_id, slack_web_hook, slack_channel, slack_
 
     Deployer(url, private_token, project_id, slack_web_hook, slack_channel, slack_username, deploy_script, last_job_file,
            interval, error_sleep, ref)
-    
+
+
+@cli.command()
+@click.option('--url', default="http://gitlab.com/", help='GitLab url')
+@click.option('--private_token', default="", help='GitLab private token')
+@click.option('--project_id',  default=-1, help='Project id')
+@click.option('--verbosity', default=False, help='Verbosity (log.level=DEBUG)')
+@click.option('--ref', default="master", help='Git Branch')
+def download(url, private_token, project_id, verbosity, ref):
+    if verbosity:
+        logging.basicConfig(format=FORMAT, level=logging.DEBUG, datefmt="%H:%M:%S")
+    else:
+        logging.basicConfig(format=FORMAT, level=logging.INFO, datefmt="%H:%M:%S")
+
+    Download(url, private_token, project_id, ref)
 
 
 if __name__ == '__main__':
-    deploy()
+    cli()

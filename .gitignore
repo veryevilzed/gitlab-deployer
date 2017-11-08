@@ -4,9 +4,12 @@
 /man
 /readline-6.2.4.1-py2.7-macosx-10.7-intel.egg
 /build
-/mobcas_packager.egg-info
+/deployer.egg-info
 /dist
-/mobcaspackager.egg-info
+/deployer.egg-info
 *.pyc
 .Python
 .idea
+
+last.txt
+
