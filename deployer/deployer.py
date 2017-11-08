@@ -1,5 +1,5 @@
 #coding:utf-8
-import gitlab, time, logging, zipfile, subprocess, requests
+import gitlab, time, logging, zipfile, subprocess, requests, os
 from os import path
 
 log = logging.getLogger("DEPLOYER")
@@ -7,16 +7,19 @@ log = logging.getLogger("DEPLOYER")
 
 class Deployer:
     def __init__(self, url, private_token, project_id, slack_web_hook, slack_channel, slack_username, deploy_script, last_job_file,
-           interval, error_sleep):
+           interval, error_sleep, ref):
         self.gl = gitlab.Gitlab(url, private_token, api_version=4)
         self.project = self.gl.projects.get(project_id)
         self.slack_web_hook = slack_web_hook
         self.slack_url = "https://hooks.slack.com/services/" + self.slack_web_hook
         self.deploy_script = deploy_script
-        self.last_job_file = last_job_file
+        self.last_job_file = path.abspath(last_job_file)
         self.last_job = self.get_last_job_id()
         self.pending_job = -1
         self.failed_job = -1
+        self.ref = ref
+        if slack_channel[0] != "#":
+            slack_channel = "#"+slack_channel
         self.slack = {
             'channel': slack_channel,
             'icon': ":rocket:",
@@ -35,13 +38,14 @@ class Deployer:
 
     def save_last_job_id(self, id):
         f = file(self.last_job_file,'wb')
-        f.write(id)
+        f.write(str(id))
         f.close()
         self.last_job = id
 
     def get_last_job_id(self):
-        if not path.exists(self.last_job_file):
-            lastJob = self.get_job(self)
+        if not os.path.isfile(self.last_job_file):
+            log.debug("%s not found (%s)" % (self.last_job_file, os.path.exists("./last.txt")) )
+            lastJob = self.get_job()
             if lastJob:
                 self.save_last_job_id(lastJob.id)
                 return lastJob.id
@@ -49,9 +53,15 @@ class Deployer:
                 self.save_last_job_id(0)
                 return 0
         else:
-            f = file(self.last_job_file, 'r')
-            id = int(f.readline())
-            return id
+            try:
+                f = file(self.last_job_file, 'r')
+                id = int(f.readline())
+                return id
+            except Exception,e:
+                os.remove(self.last_job_file)
+                log.error("Not read %s: %s" % (self.last_job_file, e.message))
+                return self.get_last_job_id()
+
 
 
 
@@ -71,10 +81,13 @@ class Deployer:
 
     def loop(self):
         job = self.get_job()
-        if not job or job.id <= self.last_job:
+        log.debug("JOB: %s" % job)
+        log.debug("LastJob: %s" % self.last_job)
+        log.debug("Go: (%s, %s, %s) %s" %  (not job,job.id <= self.last_job,  job.ref != self.ref, (not job or job.id <= self.last_job or job.ref != self.ref)))
+        if not job or job.id <= self.last_job or job.ref != self.ref:
             return
         if job.status in ["success"]:
-            self.send(":arrow_forward: Found new Job (%d)" % job.id)
+            self.send(":arrow_forward: Found new Job (%d) ref:%s (%s)\nCreated:%s %s ```%s```" % (job.id, job.ref, job.commit['id'], job.commit['committed_date'], job.commit['author_name'], job.commit['message']) )
             self.download(job)
             self.unzip()
             self.deploy()
@@ -114,9 +127,6 @@ class Deployer:
             self.send(":sos: ./deploy.sh ```%s```" % e.output)
         finally:
             self.send(":white_check_mark: ./deploy.sh ```%s```" % pres)
-
-        #out = pres.stdout.read()
-        #log.debug("Script result:", out)
 
 
 class Downloader(object):
