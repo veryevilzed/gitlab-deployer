@@ -31,20 +31,20 @@ class Deployer:
             try:
                 self.loop()
                 time.sleep(interval)
-            except Exception, e:
-                log.error("Error:%s", e.message)
-                self.send(":x: (%s)" % e.message)
+            except Exception as e:
+                log.error("Error:%s", e)
+                self.send(":x: (%s)" % e)
                 time.sleep(error_sleep)
 
     def save_last_job_id(self, id):
-        f = file(self.last_job_file,'wb')
+        f = open(self.last_job_file, 'wb')
         f.write(str(id))
         f.close()
         self.last_job = id
 
     def get_last_job_id(self):
         if not os.path.isfile(self.last_job_file):
-            log.debug("%s not found (%s)" % (self.last_job_file, os.path.exists("./last.txt")) )
+            log.debug("%s not found (%s)" % (self.last_job_file, os.path.exists("./last.txt")))
             lastJob = self.get_job()
             if lastJob:
                 self.save_last_job_id(lastJob.id)
@@ -54,16 +54,13 @@ class Deployer:
                 return 0
         else:
             try:
-                f = file(self.last_job_file, 'r')
+                f = open(self.last_job_file, 'r')
                 id = int(f.readline())
                 return id
-            except Exception,e:
+            except Exception as e:
                 os.remove(self.last_job_file)
                 log.error("Not read %s: %s" % (self.last_job_file, e.message))
                 return self.get_last_job_id()
-
-
-
 
     def send(self, text):
         if not self.slack_web_hook:
@@ -77,7 +74,6 @@ class Deployer:
         resp = requests.post(self.slack_url, data=raw_data, headers={'Content-Type': 'application/x-www-form-urlencoded'})
         if resp.status_code != 200:
             log.error("(%d): %s" % (resp.status_code, resp.text))
-
 
     def loop(self):
         job = self.get_job()
@@ -98,7 +94,6 @@ class Deployer:
         elif job.status in ["failed", "canceled", "skipped"]:
             self.send(":no_entry: job %d %s" % (job.id, job.status))
             self.save_last_job_id(job.id)
-
 
     def get_job(self):
         log.debug("get-job")
@@ -122,7 +117,7 @@ class Deployer:
         pres = ""
         try:
             pres = subprocess.check_output(self.deploy_script, shell=True, stderr=subprocess.STDOUT)
-        except subprocess.CalledProcessError, e:
+        except subprocess.CalledProcessError as e:
             log.error(e.output)
             self.send(":sos: ./deploy.sh ```%s```" % e.output)
         finally:

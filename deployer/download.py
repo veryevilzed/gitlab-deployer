@@ -1,9 +1,10 @@
 #coding:utf-8
 import gitlab, logging, zipfile, requests, os
 
-from deployer import Downloader
+from .deployer import Downloader
 
 log = logging.getLogger("DOWNLOADER")
+
 
 class Download:
     def __init__(self, url, private_token, project_id, ref):
@@ -19,7 +20,6 @@ class Download:
                 self.download(job)
                 self.unzip()
                 break
-
 
     def download(self, job):
         log.debug("download %d" % job.id)

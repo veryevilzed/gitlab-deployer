@@ -2,8 +2,8 @@
 
 import os, logging, click, sys
 
-from deployer import Deployer
-from download import Download
+from .deployer import Deployer
+from .download import Download
 
 FORMAT = '%(asctime)-7s [%(name)-6s] [%(levelname)-5s] %(message)s'
 #logging.basicConfig(format=FORMAT, level=logging.INFO, datefmt="%H:%M:%S")
