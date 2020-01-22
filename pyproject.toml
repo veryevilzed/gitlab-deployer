@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "gitlab-deployes"
+name = "gitlab-deployer"
 version = "0.1.4"
 description = "GitLab Deployer"
 authors = ["Dmitry Vysochin <dmitry.vysochin@gmail.com>"]
