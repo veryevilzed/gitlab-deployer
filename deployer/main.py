@@ -18,7 +18,7 @@ def cli():
 @click.option('--url', default="http://gitlab.com/", help='GitLab url')
 @click.option('--private_token', default="", help='GitLab private token')
 @click.option('--project_id',  default=-1, help='Project id')
-@click.option('--slack_web_hook', default="", help='Skack web hook api')
+@click.option('--slack_web_hook', default="", help='Slack web hook api')
 @click.option('--slack_channel', default="#deploy", help='Slack channel (#deploy)')
 @click.option('--slack_username', default='Deployer', help='Slack channel')
 @click.option('--deploy_script', default='./deploy.sh', help='Execute after download and unpack artifact (./deploy.sh)')
@@ -27,8 +27,10 @@ def cli():
 @click.option('--error_sleep', default=25, help='Sleep on error (25)')
 @click.option('--verbosity', default=False, help='Verbosity (log.level=DEBUG)')
 @click.option('--ref', default="master", help='Git Branch')
+@click.option('--web_url', default="", help='HTTP GET web hook')
+@click.option('--result_script', default="", help='Result shell script. Execute after deployment.')
 def deploy(url, private_token, project_id, slack_web_hook, slack_channel, slack_username, deploy_script, last_job_file,
-           interval, error_sleep, verbosity, ref):
+           interval, error_sleep, verbosity, ref, web_url, result_script):
     if private_token == "" and os.environ.get('GITLAB_PRIVATE_TOKEN'):
         private_token = os.environ.get('GITLAB_PRIVATE_TOKEN')
 
@@ -45,8 +47,19 @@ def deploy(url, private_token, project_id, slack_web_hook, slack_channel, slack_
     else:
         logging.basicConfig(format=FORMAT, level=logging.INFO, datefmt="%H:%M:%S")
 
-    Deployer(url, private_token, project_id, slack_web_hook, slack_channel, slack_username, deploy_script, last_job_file,
-           interval, error_sleep, ref)
+    slack = {
+        "web_hook": slack_web_hook,
+        "channel": slack_channel,
+        "username": slack_username
+    }
+
+    web = {
+        "url": web_url
+    }
+
+
+    Deployer(url, private_token, project_id, slack, web, deploy_script, last_job_file,
+           interval, error_sleep, ref, result_script)
 
 
 @cli.command()

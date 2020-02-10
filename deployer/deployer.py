@@ -6,25 +6,28 @@ log = logging.getLogger("DEPLOYER")
 
 
 class Deployer:
-    def __init__(self, url, private_token, project_id, slack_web_hook, slack_channel, slack_username, deploy_script, last_job_file,
-           interval, error_sleep, ref):
+    def __init__(self, url, private_token, project_id, slack, web, deploy_script, last_job_file,
+           interval, error_sleep, ref, result_script):
         self.gl = gitlab.Gitlab(url, private_token, api_version=4)
+        self.result_script = result_script
+        self.web = web
         self.project = self.gl.projects.get(project_id)
-        self.slack_web_hook = slack_web_hook
-        self.slack_url = "https://hooks.slack.com/services/" + self.slack_web_hook
+        self.slack_web_hook = slack["web_hook"]
+        self.slack_url = "https://hooks.slack.com/services/" + slack["web_hook"]
         self.deploy_script = deploy_script
         self.last_job_file = path.abspath(last_job_file)
         self.last_job = self.get_last_job_id()
         self.pending_job = -1
         self.failed_job = -1
         self.ref = ref
+        slack_channel = slack["channel"]
         if slack_channel[0] != "#":
             slack_channel = "#"+slack_channel
         self.slack = {
             'channel': slack_channel,
             'icon': ":rocket:",
             'test': "",
-            'username': slack_username
+            'username': slack["username"]
         }
 
         while(True):
@@ -59,10 +62,30 @@ class Deployer:
                 return id
             except Exception as e:
                 os.remove(self.last_job_file)
-                log.error("Not read %s: %s" % (self.last_job_file, e.message))
+                log.error("Not read %s: %s" % (self.last_job_file, e))
                 return self.get_last_job_id()
 
     def send(self, text):
+        self.send_slack(text)
+        self.send_web(text)
+        self.send_script(text)
+
+    def send_script(self, text):
+        if not self.result_script:
+            return
+        pass
+
+    def send_web(self, text):
+        if not self.web["url"]:
+            return
+        payload = {
+            "q": text
+        }
+        resp = requests.get(self.web["url"], params=payload)
+        if resp.status_code != 200:
+            log.error("(%d): %s" % (resp.status_code, resp.text))
+
+    def send_slack(self, text):
         if not self.slack_web_hook:
             return
         self.slack['text'] = text
