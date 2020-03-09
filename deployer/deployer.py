@@ -7,16 +7,16 @@ log = logging.getLogger("DEPLOYER")
 
 class Deployer:
     def __init__(self, url, private_token, project_id, slack, web, deploy_script, last_job_file,
-           interval, error_sleep, ref, result_script):
+           interval, error_sleep, ref, result_script, test_slack):
         self.gl = gitlab.Gitlab(url, private_token, api_version=4)
         self.result_script = result_script
         self.web = web
-        self.project = self.gl.projects.get(project_id)
+
         self.slack_web_hook = slack["web_hook"]
-        self.slack_url = "https://hooks.slack.com/services/" + slack["web_hook"]
-        self.deploy_script = deploy_script
-        self.last_job_file = path.abspath(last_job_file)
-        self.last_job = self.get_last_job_id()
+        if "https://" in self.slack_web_hook:
+            self.slack_url = slack["web_hook"]
+        else:
+            self.slack_url = "https://hooks.slack.com/services/" + slack["web_hook"]
         self.pending_job = -1
         self.failed_job = -1
         self.ref = ref
@@ -29,6 +29,16 @@ class Deployer:
             'test': "",
             'username': slack["username"]
         }
+        print("AAAA")
+        if test_slack:
+            log.info("Send slack test message")
+            self.send("Deployer is UP")
+
+        self.project = self.gl.projects.get(project_id)
+        self.deploy_script = deploy_script
+        self.last_job_file = path.abspath(last_job_file)
+        self.last_job = self.get_last_job_id()
+
 
         while(True):
             try:

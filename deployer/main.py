@@ -6,7 +6,7 @@ from .deployer import Deployer
 from .download import Download
 
 FORMAT = '%(asctime)-7s [%(name)-6s] [%(levelname)-5s] %(message)s'
-#logging.basicConfig(format=FORMAT, level=logging.INFO, datefmt="%H:%M:%S")
+# logging.basicConfig(format=FORMAT, level=logging.INFO, datefmt="%H:%M:%S")
 log = logging.getLogger("DEPLOYER")
 
 
@@ -14,10 +14,11 @@ log = logging.getLogger("DEPLOYER")
 def cli():
     pass
 
+
 @cli.command()
 @click.option('--url', default="http://gitlab.com/", help='GitLab url')
 @click.option('--private_token', default="", help='GitLab private token')
-@click.option('--project_id',  default=-1, help='Project id')
+@click.option('--project_id', default=-1, help='Project id')
 @click.option('--slack_web_hook', default="", help='Slack web hook api')
 @click.option('--slack_channel', default="#deploy", help='Slack channel (#deploy)')
 @click.option('--slack_username', default='Deployer', help='Slack channel')
@@ -29,12 +30,13 @@ def cli():
 @click.option('--ref', default="master", help='Git Branch')
 @click.option('--web_url', default="", help='HTTP GET web hook')
 @click.option('--result_script', default="", help='Result shell script. Execute after deployment.')
+@click.option('--test_slack', is_flag=True, help='Test Slack Send Info')
 def deploy(url, private_token, project_id, slack_web_hook, slack_channel, slack_username, deploy_script, last_job_file,
-           interval, error_sleep, verbosity, ref, web_url, result_script):
+           interval, error_sleep, verbosity, ref, web_url, result_script, test_slack):
     if private_token == "" and os.environ.get('GITLAB_PRIVATE_TOKEN'):
         private_token = os.environ.get('GITLAB_PRIVATE_TOKEN')
 
-    if private_token=="":
+    if private_token == "":
         log.error("setup private token")
         sys.exit(1)
 
@@ -57,15 +59,14 @@ def deploy(url, private_token, project_id, slack_web_hook, slack_channel, slack_
         "url": web_url
     }
 
-
     Deployer(url, private_token, project_id, slack, web, deploy_script, last_job_file,
-           interval, error_sleep, ref, result_script)
+             interval, error_sleep, ref, result_script, test_slack)
 
 
 @cli.command()
 @click.option('--url', default="http://gitlab.com/", help='GitLab url')
 @click.option('--private_token', default="", help='GitLab private token')
-@click.option('--project_id',  default=-1, help='Project id')
+@click.option('--project_id', default=-1, help='Project id')
 @click.option('--verbosity', default=False, help='Verbosity (log.level=DEBUG)')
 @click.option('--ref', default="master", help='Git Branch')
 def download(url, private_token, project_id, verbosity, ref):
