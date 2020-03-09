@@ -1,0 +1,26 @@
+Metadata-Version: 1.2
+Name: gitlab-deployer
+Version: 0.1.4
+Summary: GitLab Deployer
+Home-page: https://github.com/veryevilzed/gitlab-deployer
+Author: Dmitry Vysochin
+Author-email: dmitry.vysochin@gmail.com
+License: UNKNOWN
+Description: # GitLab deployer
+        
+        
+        ## Installation
+        
+        ```
+        pip install gitlab-deployer
+        ```
+        
+        
+        ## Usage 
+        
+        Coming Soon!
+        
+        
+        
+Platform: UNKNOWN
+Requires-Python: >=3.6,<4.0

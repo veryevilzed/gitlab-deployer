@@ -1,0 +1,3 @@
+[console_scripts]
+deployer = deployer.main:cli
+
