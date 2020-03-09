@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "gitlab-deployer"
-version = "0.1.5"
+version = "0.1.7"
 description = "GitLab Deployer"
 authors = ["Dmitry Vysochin <dmitry.vysochin@gmail.com>"]
 license = "MIT"

@@ -31,7 +31,7 @@ class Deployer:
             'test': "",
             'username': slack["username"]
         }
-        print("AAAA")
+
         if test_slack:
             log.info("Send slack test message")
             self.send("Deployer is UP")
@@ -52,7 +52,7 @@ class Deployer:
                 time.sleep(error_sleep)
 
     def save_last_job_id(self, id):
-        f = open(self.last_job_file, 'wb')
+        f = open(self.last_job_file, 'w')
         f.write(str(id))
         f.close()
         self.last_job = id
