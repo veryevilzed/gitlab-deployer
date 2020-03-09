@@ -1,4 +1,6 @@
 #coding:utf-8
+import traceback
+
 import gitlab, time, logging, zipfile, subprocess, requests, os
 from os import path
 
@@ -46,7 +48,7 @@ class Deployer:
                 time.sleep(interval)
             except Exception as e:
                 log.error("Error:%s", e)
-                self.send(":x: (%s)" % e)
+                self.send(":x: (%s)\n'%s'" % (e, traceback.format_exc().splitlines()))
                 time.sleep(error_sleep)
 
     def save_last_job_id(self, id):
@@ -148,11 +150,13 @@ class Deployer:
     def deploy(self):
         log.debug("deploying script")
         pres = ""
+        encoding = "utf-8"
         try:
             pres = subprocess.check_output(self.deploy_script, shell=True, stderr=subprocess.STDOUT)
+            pres = str(pres, encoding)
         except subprocess.CalledProcessError as e:
             log.error(e.output)
-            self.send(":sos: ./deploy.sh ```%s```" % e.output)
+            self.send(":sos: ./deploy.sh ```%s```" % str(e.output, encoding))
         finally:
             self.send(":white_check_mark: ./deploy.sh ```%s```" % pres)
 
