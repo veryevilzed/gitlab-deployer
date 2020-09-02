@@ -99,5 +99,21 @@ systemctl restart simplejavaproject
 echo "OK"
 ```
 
+## Develop
+
+Using [poetry](https://python-poetry.org/)
+
+```
+cd ./gitlab-deployer/
+poetry install
+```
+
+Run with poetry
+```
+poetry run deployer <command> <args>
+
+poetry run deployer deploy --help
+```
 
 
+Enjoy!
