@@ -1,4 +1,4 @@
-# GitLab deployer
+# GitLab deployer 🚀
 
 
 ## Installation
