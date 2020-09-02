@@ -64,7 +64,10 @@ Options:
 Command line
 ```
 
-deployer deploy --ref master --slack_web_hook=https://hooks.slack.com/services/xxxxxx/yyyyyy/zzzzzzzzzzzzz --slack_channel="#deploy"  --slack_username="deploy-user"  --url http://gitlab.com --private_token=tttttttttttttt --project_id=00
+deployer deploy --ref master \
+	--slack_web_hook=https://hooks.slack.com/services/xxxxxx/yyyyyy/zzzzzzzzzzzzz \
+	--slack_channel="#deploy"  --slack_username="deploy-user"  --url http://gitlab.com \
+	--private_token=tttttttttttttt --project_id=00
 
 ```
 
@@ -75,7 +78,10 @@ system.d example
 Description=Deployer Service
 
 [Service]
-ExecStart=deployer deploy --ref master --slack_web_hook=https://hooks.slack.com/services/xxxxxx/yyyyyy/zzzzzzzzzzzzz --slack_channel="#deploy"  --slack_username="deploy-user"  --url http://gitlab.com --private_token=tttttttttttttt --project_id=00
+ExecStart=deployer deploy --ref master \
+	--slack_web_hook=https://hooks.slack.com/services/xxxxxx/yyyyyy/zzzzzzzzzzzzz \
+	--slack_channel="#deploy"  --slack_username="deploy-user"  --url http://gitlab.com \
+	--private_token=tttttttttttttt --project_id=00
 
 
 Restart=always
