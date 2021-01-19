@@ -9,7 +9,7 @@ log = logging.getLogger("DEPLOYER")
 
 class Deployer:
     def __init__(self, url, private_token, project_id, slack, web, deploy_script, last_job_file,
-           interval, error_sleep, ref, result_script, test_slack):
+           interval, error_sleep, ref, result_script, test_slack, loop=True):
         self.gl = gitlab.Gitlab(url, private_token, api_version=4)
         self.result_script = result_script
         self.web = web
@@ -42,7 +42,7 @@ class Deployer:
         self.last_job = self.get_last_job_id()
 
 
-        while(True):
+        while loop:
             try:
                 self.loop()
                 time.sleep(interval)
@@ -50,6 +50,8 @@ class Deployer:
                 log.error("Error:%s", e)
                 self.send(":x: (%s)\n'%s'" % (e, traceback.format_exc().splitlines()))
                 time.sleep(error_sleep)
+        if not loop:
+            self.loop()
 
     def save_last_job_id(self, id):
         f = open(self.last_job_file, 'w')

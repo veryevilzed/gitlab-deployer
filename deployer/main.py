@@ -18,6 +18,20 @@ def cli():
 @cli.command()
 @click.option('--url', default="http://gitlab.com/", help='GitLab url')
 @click.option('--private_token', default="", help='GitLab private token')
+@click.option('--config', default="", help="Path to config file (./config.ini)")
+@click.option('--slack_web_hook', default="", help='Slack web hook api')
+@click.option('--slack_channel', default="#deploy", help='Slack channel (#deploy)')
+@click.option('--slack_username', default='Deployer', help='Slack channel')
+@click.option('--interval', default=5, help='Pull interval (5)')
+@click.option('--error_sleep', default=25, help='Sleep on error (25)')
+@click.option('--verbosity', default=False, help='Verbosity (log.level=DEBUG)')
+def multi(url, private_token, config, slack_web_hook, slack_channel, slack_username, interval, error_sleep, verbosity):
+    pass
+
+
+@cli.command()
+@click.option('--url', default="http://gitlab.com/", help='GitLab url')
+@click.option('--private_token', default="", help='GitLab private token')
 @click.option('--project_id', default=-1, help='Project id')
 @click.option('--slack_web_hook', default="", help='Slack web hook api')
 @click.option('--slack_channel', default="#deploy", help='Slack channel (#deploy)')

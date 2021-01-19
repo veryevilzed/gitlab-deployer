@@ -4,6 +4,7 @@ deployer/__init__.py
 deployer/deployer.py
 deployer/download.py
 deployer/main.py
+deployer/multi.py
 gitlab_deployer.egg-info/PKG-INFO
 gitlab_deployer.egg-info/SOURCES.txt
 gitlab_deployer.egg-info/dependency_links.txt

@@ -6,7 +6,7 @@ Home-page: https://github.com/veryevilzed/gitlab-deployer
 Author: Dmitry Vysochin
 Author-email: dmitry.vysochin@gmail.com
 License: UNKNOWN
-Description: # GitLab deployer
+Description: # GitLab deployer ð
         
         
         ## Installation
@@ -72,7 +72,10 @@ Description: # GitLab deployer
         Command line
         ```
         
-        deployer deploy --ref master --slack_web_hook=https://hooks.slack.com/services/xxxxxx/yyyyyy/zzzzzzzzzzzzz --slack_channel="#deploy"  --slack_username="deploy-user"  --url http://gitlab.com --private_token=tttttttttttttt --project_id=00
+        deployer deploy --ref master \
+        	--slack_web_hook=https://hooks.slack.com/services/xxxxxx/yyyyyy/zzzzzzzzzzzzz \
+        	--slack_channel="#deploy"  --slack_username="deploy-user"  --url http://gitlab.com \
+        	--private_token=tttttttttttttt --project_id=00
         
         ```
         
@@ -83,7 +86,10 @@ Description: # GitLab deployer
         Description=Deployer Service
         
         [Service]
-        ExecStart=deployer deploy --ref master --slack_web_hook=https://hooks.slack.com/services/xxxxxx/yyyyyy/zzzzzzzzzzzzz --slack_channel="#deploy"  --slack_username="deploy-user"  --url http://gitlab.com --private_token=tttttttttttttt --project_id=00
+        ExecStart=deployer deploy --ref master \
+        	--slack_web_hook=https://hooks.slack.com/services/xxxxxx/yyyyyy/zzzzzzzzzzzzz \
+        	--slack_channel="#deploy"  --slack_username="deploy-user"  --url http://gitlab.com \
+        	--private_token=tttttttttttttt --project_id=00
         
         
         Restart=always
@@ -107,8 +113,23 @@ Description: # GitLab deployer
         echo "OK"
         ```
         
+        ## Develop
+        
+        Using [poetry](https://python-poetry.org/)
+        
+        ```
+        cd ./gitlab-deployer/
+        poetry install
+        ```
+        
+        Run with poetry
+        ```
+        poetry run deployer <command> <args>
+        
+        poetry run deployer deploy --help
+        ```
         
         
-        
+        Enjoy!
 Platform: UNKNOWN
 Requires-Python: >=3.6,<4.0
