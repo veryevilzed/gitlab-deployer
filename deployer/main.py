@@ -22,6 +22,7 @@ def cli():
 @click.option('--slack_web_hook', default="", help='Slack web hook api')
 @click.option('--slack_channel', default="#deploy", help='Slack channel (#deploy)')
 @click.option('--slack_username', default='Deployer', help='Slack channel')
+@click.option('--slack_subject', default='Deployer', help='Slack subject before each message channel')
 @click.option('--deploy_script', default='./deploy.sh', help='Execute after download and unpack artifact (./deploy.sh)')
 @click.option('--last_job_file', default='./last.txt', help='Last job file (last.txt)')
 @click.option('--interval', default=5, help='Pull interval (5)')
@@ -31,7 +32,7 @@ def cli():
 @click.option('--web_url', default="", help='HTTP GET web hook')
 @click.option('--result_script', default="", help='Result shell script. Execute after deployment.')
 @click.option('--test_slack', is_flag=True, help='Test Slack Send Info')
-def deploy(url, private_token, project_id, slack_web_hook, slack_channel, slack_username, deploy_script, last_job_file,
+def deploy(url, private_token, project_id, slack_web_hook, slack_channel, slack_username, slack_subject, deploy_script, last_job_file,
            interval, error_sleep, verbosity, ref, web_url, result_script, test_slack):
     if private_token == "" and os.environ.get('GITLAB_PRIVATE_TOKEN'):
         private_token = os.environ.get('GITLAB_PRIVATE_TOKEN')
@@ -52,7 +53,8 @@ def deploy(url, private_token, project_id, slack_web_hook, slack_channel, slack_
     slack = {
         "web_hook": slack_web_hook,
         "channel": slack_channel,
-        "username": slack_username
+        "username": slack_username,
+        "subject": slack_subject
     }
 
     web = {

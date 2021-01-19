@@ -29,11 +29,12 @@ class Deployer:
             'channel': slack_channel,
             'icon': ":rocket:",
             'test': "",
-            'username': slack["username"]
+            'username': slack["username"],
+            'subject': slack["subject"]
         }
 
         if test_slack:
-            log.info("Send slack test message")
+            log.info("Send slack test message from %s" % (slack["subject"],) )
             self.send("Deployer is UP")
 
         self.project = self.gl.projects.get(project_id)
@@ -100,7 +101,7 @@ class Deployer:
     def send_slack(self, text):
         if not self.slack_web_hook:
             return
-        self.slack['text'] = text
+        self.slack['text'] = "(%s) %s" % (self.slack['subject'], text)
         raw_data = "payload={" \
                    "\"channel\": \"%(channel)s\"," \
                    "\"username\": \"%(username)s\", " \
